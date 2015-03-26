@@ -13,6 +13,11 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+const (
+	tsUrl    = baseUrl + "/userts"
+	tsAddUrl = tsUrl + "/add"
+)
+
 func LogHours() (err error) {
 	Login()
 

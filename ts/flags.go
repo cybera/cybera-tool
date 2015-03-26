@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+const (
+	dateLayout = "2006-01-02"
+)
+
 // Define command-line flags
 var (
 	f           = flag.NewFlagSet("timesheet", flag.PanicOnError)

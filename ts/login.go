@@ -5,24 +5,22 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"os"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
 const (
-	baseUrl    = "https://my.cybera.ca"
-	loginUrl   = baseUrl + "/login"
-	tsUrl      = baseUrl + "/userts"
-	tsAddUrl   = tsUrl + "/add"
-	otUrl      = baseUrl + "/userto"
-	user       = "valiushko"
-	pass       = "valiushko"
-	dateLayout = "2006-01-02"
+	baseUrl  = "https://my.cybera.ca"
+	loginUrl = baseUrl + "/login"
+	otUrl    = baseUrl + "/userto"
 )
 
 // Define network client
 var jar *cookiejar.Jar
 var client http.Client
+var user = os.Getenv("TS_USER")
+var pass = os.Getenv("TS_PWD")
 
 func Login() {
 	jar, _ := cookiejar.New(nil)
