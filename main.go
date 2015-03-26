@@ -1,11 +1,16 @@
 package main
 
 import (
+	"flag"
 	"illotum/cybera/ts"
-	"time"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
-	ts.Init()
-	ts.LogHours(time.Now(), time.Now(), 7, "DevOps", "Some project")
+	flag.Parse()
+	switch flag.Arg(0) {
+	case "log":
+		ts.LogHours()
+	}
 }
