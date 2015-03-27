@@ -6,16 +6,12 @@ import (
 	"net/url"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/franela/goreq"
 )
 
 // Get, check for errors and parse
 func getParsed(uri string) *goquery.Document {
-	res, err := goreq.Request{
-		CookieJar:   cookieJar,
-		Compression: goreq.Gzip(),
-		Uri:         uri,
-	}.Do()
+	c := http.Client{Jar: cookieJar}
+	res, err := c.Get(uri)
 	if err != nil {
 		log.Fatal(err)
 	}
