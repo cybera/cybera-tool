@@ -14,15 +14,13 @@ import (
 )
 
 const (
-	tsUrl    = baseUrl + "/userts"
+	tsUrl    = baseUri + "/userts"
 	tsAddUrl = tsUrl + "/add"
 )
 
 func LogHours() (err error) {
 	Login()
-
-	err = f.Parse(flag.Args()[1:])
-	if err != nil {
+	if err := f.Parse(flag.Args()[1:]); err != nil {
 		log.Fatal(err)
 	}
 
