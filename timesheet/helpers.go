@@ -8,7 +8,7 @@ import (
 )
 
 // Parse HTML from a reader
-func parse(res *http.Response) *goquery.Document {
+func parseResponse(res *http.Response) *goquery.Document {
 	doc, err := goquery.NewDocumentFromResponse(res)
 	if err != nil {
 		log.Fatal(err)
@@ -17,6 +17,6 @@ func parse(res *http.Response) *goquery.Document {
 }
 
 // Initialise client
-func New() *http.Client {
-	return &http.Client{Jar: Jar}
+func newClient() *http.Client {
+	return &http.Client{Jar: cookieJar}
 }

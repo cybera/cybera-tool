@@ -1,17 +1,17 @@
 package main
 
 import (
+	"illotum/cybera/timesheet"
 	"os"
 
-	"gopkg.in/alecthomas/kingpin.v2-unstable"
+	"gopkg.in/alecthomas/kingpin.v1"
 )
 
 // Define the UI
 var (
-	app     = kingpin.New("cybera", "A tool that makes cyberans happy.")
-	appUser = app.Flag("user", "Timesheet service username.").String()
-	appPass = app.Flag("pass", "Timesheet service password.").String()
-	appKey  = app.Flag("key", "Timesheet service session key. Will be read from $CYBERA_KEY, if not provided.").OverrideDefaultFromEnvar("CYBERA_KEY").String()
+	app            = kingpin.New("cybera", "A tool that makes cyberans happy.")
+	appCredentials = app.Flag("credentials", "Timesheet service username and password.").Short('c').PlaceHolder("USER:PASS").String()
+	appKey         = app.Flag("key", "Timesheet service session key. Will be read from $CYBERA_KEY, if not provided.").OverrideDefaultFromEnvar("CYBERA_KEY").String()
 
 	// Log time command. Not to confuse with `log.Fatal()`.
 	l            = app.Command("log", "Log a timesheet entry(s).")
@@ -23,7 +23,11 @@ var (
 
 func main() {
 	app.Version("0.0.1")
-	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
+	command := kingpin.MustParse(app.Parse(os.Args[1:]))
+	if len(*appCredentials) != 0 {
+		timesheet.Auth(*appCredentials)
+	}
+	switch command {
 	case l.FullCommand():
 		// timesheet.Log()
 	}
