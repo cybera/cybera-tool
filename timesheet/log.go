@@ -1,4 +1,4 @@
-package ts
+package timesheet
 
 import (
 	"errors"
@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"illotum/cybera-tool/session"
+
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -18,29 +20,26 @@ const (
 	tsAddUrl = tsUrl + "/add"
 )
 
-func LogHours() (err error) {
-	Login()
+func Log() {
+	Auth("valiushko", "valiushko")
 	if err := f.Parse(flag.Args()[1:]); err != nil {
 		log.Fatal(err)
 	}
 
-	if len(*flagNotes) < 1 {
-		log.Fatal(errors.New("Notes can't be empty: " + *flagNotes))
+	if len(*flagDesc) < 1 {
+		log.Fatal(errors.New("Notes can't be empty"))
 	}
 	// Get login page to parse form id
-	resp, err := client.Get(tsAddUrl)
-	if err != nil {
-		log.Fatal(err)
+	fmt.Println(session.Key.Value)
+	res, keyUpdated := session.Get(tsAddUrl)
+	if keyUpdated {
+		fmt.Println("KEY UPDATED: ", session.Key.Value)
 	}
-
-	doc, err := goquery.NewDocumentFromResponse(resp)
-	if err != nil {
-		log.Fatal(err)
-	}
+	doc := session.Parse(res)
 
 	formBuildId, exists := doc.Find("#timepunchextuni-form input[name='form_build_id']").Attr("value")
 	if !exists {
-		log.Fatal("Can't find form build id")
+		log.Fatal("Can't find timesheet form build id")
 	}
 
 	formToken, exists := doc.Find("#edit-timepunchextuni-form-form-token").Attr("value")
@@ -61,13 +60,13 @@ func LogHours() (err error) {
 
 	// Fill the form
 	tsAddRequest := url.Values{
-		"fromdate[date]": {time.Time(flagFrom).Format(dateLayout)},
-		"todate[date]":   {time.Time(flagTo).Format(dateLayout)},
+		"fromdate[date]": {time.Time(flagAt).Format(dateLayout)},
+		"todate[date]":   {time.Time(flagAt).Format(dateLayout)},
 		"hours":          {strconv.FormatFloat(flagHours.Hours(), 'f', 2, 64)},
 		"op":             {"Submit"},
 		"selaccount":     {accId},
-		"notes":          {*flagNotes},
-		"userext":        {user},
+		"notes":          {*flagDesc},
+		"userext":        {},
 		"destination":    {"userts/add"},
 		"autorefresh":    {"0"},
 		"form_build_id":  {formBuildId},
@@ -76,20 +75,14 @@ func LogHours() (err error) {
 	}
 	fmt.Printf("Logging %s hours for %s\n", tsAddRequest["hours"][0], tsAddRequest["fromdate[date]"][0])
 	// Submit time entry
-	resp, err = client.PostForm(tsAddUrl, tsAddRequest)
-	if err != nil {
-		log.Fatal(err)
+	res, keyUpdated = session.Post(tsAddUrl, tsAddRequest)
+	if keyUpdated {
+		fmt.Println("KEY UPDATED: ", session.Key.Value)
 	}
+	doc = session.Parse(res)
 
-	// Check for confirmation
-	doc, err = goquery.NewDocumentFromResponse(resp)
-	if err != nil {
-		log.Fatal(err)
-	}
 	confirmation := doc.Find(".messages").Text()
 	if len(strings.TrimSpace(confirmation)) < 1 {
 		log.Fatal(errors.New("No confirmation recieved"))
 	}
-	// TODO: Confirm bulk entries
-	return nil
 }
