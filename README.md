@@ -1,7 +1,7 @@
 # Cybera Tool
 
 ## Requirements
-Install Go through Homebrew if running from source instead of downloading the [latest release](https://github.com/cybera/racometer/releases):
+Install Go through Homebrew.
 
 ```bash
 brew install go
@@ -10,9 +10,7 @@ brew install go
 ## Installation
 
 ```bash
-git clone https://github.com/cybera/cybera-tool
-cd cybera-tool
-go install
+go get github.com/cybera/cybera-tool
 ```
 
 ## Usage
@@ -27,7 +25,7 @@ export CYBERA_KEY=$(pbpaste)
 Log:
 
 ```bash
-cybera-tool log DevOps "I've spent today on cybera-tool"
+cybera-tool log DevOps "I've spent today working on cybera-tool"
 ```
 
 Also:
