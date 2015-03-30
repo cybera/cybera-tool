@@ -22,7 +22,7 @@ func Auth(credentials string) {
 	}
 
 	c := newClient()
-	// Get login page to parse form id
+	// Get login page to parse the form id
 	res, _ := c.Get(authUrl)
 	doc := parseResponse(res)
 	formBuildId, exists := doc.Find("#user-login div input[name='form_build_id']").Attr("id")
@@ -49,10 +49,10 @@ func Auth(credentials string) {
 				key = v
 			}
 		}
-		fmt.Printf("New session key:\nCYBERA_KEY=%s:%s\n", key.Name, key.Value)
+		fmt.Printf("New CYBERA_KEY:\n%s:%s\n", key.Name, key.Value)
 	} else {
 		fmt.Printf("Login failed: %v\n", res.Status)
-		// Not updated key means that session hasn't changed, i.e. login failed
+		// Not updated key means that the session hasn't changed, i.e. login failed
 		doc = parseResponse(res)
 		msg := doc.Find(".error").First()
 		if msg != nil {

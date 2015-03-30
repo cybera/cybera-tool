@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"golang.org/x/net/publicsuffix"
-	"gopkg.in/alecthomas/kingpin.v1"
 )
 
 const (
@@ -28,8 +27,7 @@ func newCookieJar() *cookiejar.Jar {
 	return jar
 }
 
-func UpdateCookieJar(ctx *kingpin.ParseContext) {
-	key := ""
+func UpdateCookieJar(key string) {
 	if splitKey := strings.Split(key, ":"); len(key) == 69 && len(splitKey) == 2 {
 		sessionCookie := &http.Cookie{
 			Name:   splitKey[0],

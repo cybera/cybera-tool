@@ -1,7 +1,7 @@
 package main
 
 import (
-	"illotum/cybera/timesheet"
+	ts "illotum/cybera/timesheet"
 	"os"
 
 	"gopkg.in/alecthomas/kingpin.v1"
@@ -16,19 +16,26 @@ var (
 	// Log time command. Not to confuse with `log.Fatal()`.
 	l            = app.Command("log", "Log a timesheet entry(s).")
 	lTime        = l.Flag("time", "Duration to log.").Short('t').Default("7h").Duration()
-	lProject     = l.Arg("project", "Project under which time will be logged.").Required().String()
+	lAccount     = l.Arg("account", "Account under which time will be logged.").Required().String()
 	lDescription = l.Arg("description", "Description of work.").Required().String()
-	lDates       = l.Arg("dates", "Date or date range to log this work at.").Strings()
+	lDates       = l.Arg("dates", "Date or date range to log this work at. TO BE IMPLEMENTED.").Default(ts.Today).Strings()
 )
 
 func main() {
 	app.Version("0.0.1")
 	command := kingpin.MustParse(app.Parse(os.Args[1:]))
-	if len(*appCredentials) != 0 {
-		timesheet.Auth(*appCredentials)
+	if len(*appKey) != 0 {
+		ts.UpdateCookieJar(*appKey)
+	} else {
+		if len(*appCredentials) != 0 {
+			ts.Auth(*appCredentials)
+		} else {
+			println("Can't do much without either session key or user credentials.")
+			os.Exit(1)
+		}
 	}
 	switch command {
 	case l.FullCommand():
-		// timesheet.Log()
+		ts.Log(*lDates, *lTime, *lAccount, *lDescription)
 	}
 }
