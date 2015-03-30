@@ -1,8 +1,9 @@
 package main
 
 import (
-	ts "illotum/cybera/timesheet"
 	"os"
+
+	ts "github.com/cybera/cybera-tool/timesheet"
 
 	"gopkg.in/alecthomas/kingpin.v1"
 )
