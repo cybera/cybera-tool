@@ -1,15 +1,16 @@
 package main
 
 import (
-	ts "illotum/cybera/timesheet"
 	"os"
+
+	ts "github.com/cybera/cybera-tool/timesheet"
 
 	"gopkg.in/alecthomas/kingpin.v1"
 )
 
 // Define the UI
 var (
-	app            = kingpin.New("cybera", "A tool that makes cyberans happy.")
+	app            = kingpin.New("cybera", "Tool that makes cyberans happy.")
 	appCredentials = app.Flag("credentials", "Timesheet service username and password.").Short('c').PlaceHolder("USER:PASS").String()
 	appKey         = app.Flag("key", "Timesheet service session key. Will be read from $CYBERA_KEY, if not provided.").PlaceHolder("SESSION_KEY").OverrideDefaultFromEnvar("CYBERA_KEY").String()
 
