@@ -44,10 +44,12 @@ func Auth(credentials string) {
 
 	// Feedback
 	doc = parseResponse(res)
-	msg := doc.Find(".error").First()
-	if msg != nil {
-		fmt.Printf("%s\n", strings.TrimSpace(msg.Text()))
-	} else if res.StatusCode == 200 {
+	msgs := doc.Find(".error")
+	for i := range msgs.Nodes {
+		m := msgs.Eq(i)
+		println(strings.TrimSpace(m.Text()))
+	}
+	if res.StatusCode == 200 {
 		cookies := c.Jar.Cookies(baseUrlCanonical)
 		var key *http.Cookie
 		for _, v := range cookies {
@@ -55,7 +57,7 @@ func Auth(credentials string) {
 				key = v
 			}
 		}
-		fmt.Printf("New CYBERA_KEY:\n%s:%s\n", key.Name, key.Value)
+		fmt.Printf("New session key:\n%s:%s\n", key.Name, key.Value)
 	} else {
 		fmt.Printf("Login failed: %v\n", res.Status)
 	}
