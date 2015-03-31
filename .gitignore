@@ -28,3 +28,8 @@ _testmain.go
 
 # dotenv
 .env
+
+# vim
+**/*.swp
+
+cybera-tool
