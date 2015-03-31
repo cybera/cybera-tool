@@ -17,6 +17,7 @@ var (
 	// Log time command. Not to confuse with `log.Fatal()`.
 	l            = app.Command("log", "Log a timesheet entry(s).")
 	lTime        = l.Flag("time", "Duration to log.").Short('t').Default("7h").Duration()
+	lNoop        = l.Flag("noop", "no-op mode. Don't actually post a time.").Short('n').Bool()
 	lAccount     = l.Arg("account", "Account under which time will be logged.").Required().String()
 	lDescription = l.Arg("description", "Description of work.").Required().String()
 	lDates       = l.Arg("dates", "Date or date range to log this work at. TO BE IMPLEMENTED.").Default(ts.Today).Strings()
@@ -37,6 +38,6 @@ func main() {
 	}
 	switch command {
 	case l.FullCommand():
-		ts.Log(*lDates, *lTime, *lAccount, *lDescription)
+		ts.Log(*lDates, *lTime, *lAccount, *lDescription, *lNoop)
 	}
 }

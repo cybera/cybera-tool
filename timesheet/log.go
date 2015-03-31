@@ -27,7 +27,7 @@ func parseAccounts(doc *goquery.Document) map[string]string {
 	return accounts
 }
 
-func Log(dates []string, time time.Duration, account, descr string) {
+func Log(dates []string, time time.Duration, account, descr string, noop bool) {
 	c := newClient()
 
 	// Get login page to parse the form id
@@ -66,12 +66,17 @@ func Log(dates []string, time time.Duration, account, descr string) {
 		"form_id":        {"timepunchextuni_form"},
 	}
 	fmt.Printf("Logging %s hours for %s\n", tsAddRequest["hours"][0], tsAddRequest["fromdate[date]"][0])
-	// Submit time entry
-	res, _ = c.PostForm(logUrl, tsAddRequest)
 
-	doc = parseResponse(res)
-	confirmation := doc.Find(".messages").Text()
-	if len(strings.TrimSpace(confirmation)) < 1 {
-		log.Fatal(errors.New("No confirmation recieved"))
+	if noop {
+		fmt.Printf("Would have POST'd: %+v\n", tsAddRequest)
+	} else {
+		// Submit time entry
+		res, _ = c.PostForm(logUrl, tsAddRequest)
+
+		doc = parseResponse(res)
+		confirmation := doc.Find(".messages").Text()
+		if len(strings.TrimSpace(confirmation)) < 1 {
+			log.Fatal(errors.New("No confirmation recieved"))
+		}
 	}
 }
