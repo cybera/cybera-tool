@@ -11,7 +11,7 @@ import (
 // Define the UI
 var (
 	app            = kingpin.New("cybera", "Tool that makes cyberans happy.")
-	appCredentials = app.Flag("credentials", "Timesheet service username and password.").Short('c').PlaceHolder("USER:PASS").String()
+	appCredentials = app.Flag("credentials", "Timesheet service username and password.").PlaceHolder("USER:PASS").OverrideDefaultFromEnvar("CYBERA_CREDS").Short('c').String()
 	appKey         = app.Flag("key", "Timesheet service session key. Will be read from $CYBERA_KEY, if not provided.").PlaceHolder("SESSION_KEY").OverrideDefaultFromEnvar("CYBERA_KEY").String()
 
 	// Log time command. Not to confuse with `log.Fatal()`.
