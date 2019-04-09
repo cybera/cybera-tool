@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	authUrl = baseUrl + "/login"
+	authUrl = baseUrl
 )
 
 func Auth(credentials string) {
@@ -25,18 +25,26 @@ func Auth(credentials string) {
 	// Get login page to parse the form id
 	res, _ := c.Get(authUrl)
 	doc := parseResponse(res)
-	formBuildId, exists := doc.Find("#user-login div input[name='form_build_id']").Attr("id")
-	if !exists {
-		log.Fatal("Can't find login form build id")
+	csrf_value := ""
+
+	// CSRF - is stored in the cookie
+	if res.StatusCode == 200 {
+		cookies := c.Jar.Cookies(baseUrlCanonical)
+		for _, v := range cookies {
+			if v.Name == "ctsrtx" {
+				csrf_value = v.Value
+			}
+		}
 	}
 
 	// Fill the form
 	form := url.Values{
-		"name":          {user},
-		"pass":          {pass},
-		"form_build_id": {formBuildId},
-		"form_id":       {"user_login"},
-		"op":            {"Log in"},
+		"auth_user": {user},
+		"auth_pw":   {pass},
+		//"form_build_id": {formBuildId},
+		//"form_id":    {"user_login"},
+		"auth_login": {"Log in"},
+		"ctsrtx":     {csrf_value},
 	}
 
 	// Log in
@@ -53,11 +61,15 @@ func Auth(credentials string) {
 		cookies := c.Jar.Cookies(baseUrlCanonical)
 		var key *http.Cookie
 		for _, v := range cookies {
-			if v.Name[:4] == "SESS" {
+			if v.Name == "PHPSESSID" {
 				key = v
 			}
 		}
-		fmt.Printf("New session key:\n%s:%s\n", key.Name, key.Value)
+		if key != nil {
+			fmt.Printf("New session key:\n%s:%s\n", key.Name, key.Value)
+		} else {
+			fmt.Printf("Failed to find session key")
+		}
 	} else {
 		fmt.Printf("Login failed: %v\n", res.Status)
 	}

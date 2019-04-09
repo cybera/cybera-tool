@@ -13,12 +13,12 @@ import (
 
 const (
 	timeLayout = "2006-01-02"
-	baseUrl    = "https://my.cybera.ca"
+	baseUrl    = "https://timesheet.cybera.ca"
 )
 
 var (
 	cookieJar        = newCookieJar()
-	baseUrlCanonical = &url.URL{Scheme: "https", Host: "my.cybera.ca"}
+	baseUrlCanonical = &url.URL{Scheme: "https", Host: "timesheet.cybera.ca"}
 )
 
 func newCookieJar() *cookiejar.Jar {
@@ -28,20 +28,15 @@ func newCookieJar() *cookiejar.Jar {
 }
 
 func UpdateCookieJar(key string) {
-	if splitKey := strings.Split(key, ":"); len(key) == 69 && len(splitKey) == 2 {
+	if splitKey := strings.Split(key, ":"); len(key) == 36 && len(splitKey) == 2 {
 		sessionCookie := &http.Cookie{
 			Name:   splitKey[0],
 			Value:  splitKey[1],
-			Domain: "my.cybera.ca",
+			Domain: "timesheet.cybera.ca",
 			Path:   "/",
 		}
-		jsCookie := &http.Cookie{
-			Name:   "has_js",
-			Value:  "0",
-			Domain: "my.cybera.ca",
-			Path:   "/",
-		}
-		cookieJar.SetCookies(baseUrlCanonical, []*http.Cookie{sessionCookie, jsCookie})
+		csrfCookie := &http.Cookie{}
+		cookieJar.SetCookies(baseUrlCanonical, []*http.Cookie{sessionCookie, csrfCookie})
 	} else {
 		log.Fatal(errors.New("Malformed session key"))
 	}

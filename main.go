@@ -27,7 +27,7 @@ var (
 )
 
 func main() {
-	app.Version("0.0.1")
+	app.Version("0.0.2")
 	command := kingpin.MustParse(app.Parse(os.Args[1:]))
 	if len(*appKey) != 0 {
 		ts.UpdateCookieJar(*appKey)
